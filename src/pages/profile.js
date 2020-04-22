@@ -7,7 +7,7 @@ import Input from '../components/Input'
 
 function ProfilePage() {
   const { fullName, email } = useContext(CustomerContext)
-  const { updateCustomerInfo } = useContext(CustomerContext)
+  const { updateCustomerInfo, allOrders, orderDetails } = useContext(CustomerContext)
   const [customerError, setCustomerError] = useState(null)
   const [isEditData, setIsEditData] = useState(false)
 
@@ -109,6 +109,20 @@ function ProfilePage() {
             Edit
           </button>
         )}
+        <button
+          onClick={allOrders}
+          type="button"
+          className="mr-4 w-48 appearance-none bg-black border border-black text-white hover:text-white px-4 py-3 leading-tight rounded-none focus:outline-none mt-4 no-underline"
+        >
+          GetAllOrders
+        </button>
+        <button
+          onClick={orderDetails}
+          type="button"
+          className="mr-4 w-48 appearance-none bg-black border border-black text-white hover:text-white px-4 py-3 leading-tight rounded-none focus:outline-none mt-4 no-underline"
+        >
+          Get Order Details
+        </button>
       </div>
     </React.Fragment>
   )

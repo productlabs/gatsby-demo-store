@@ -67,6 +67,20 @@ function CustomerProvider({ children, customerToken, ...props }) {
     dispatch({ type: SET_CUSTOMER, payload })
   }
 
+
+  async function allOrders() {
+    const allOrdersData = await moltin.get(
+      '/orders', {
+      'X-Moltin-Customer-Token': token
+      })
+    return allOrdersData
+  }
+
+  async function orderDetails() {
+    const res = await moltin.get('/orders/bbdc7765-0822-4322-aefa-08b63057a3bb')
+    return res
+  }
+
   async function register(name, email, password) {
     const response = await moltin.post('customers', {
       type: 'customer',
@@ -141,7 +155,10 @@ function CustomerProvider({ children, customerToken, ...props }) {
         isLoggedIn,
         updateCustomerInfo,
         fullName,
-        email
+        email,
+        allOrders,
+        orderDetails,
+        customerId
       }}
     >
       {children}

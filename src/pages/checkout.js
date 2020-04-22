@@ -26,7 +26,7 @@ function CheckoutPage({ stripe }) {
   const { checkout, pay, confirmTransaction } = useContext(CheckoutContext)
   const [checkoutError, setCheckoutError] = useState(null)
   const [cardElement, setCardElement] = useState(null)
-  let { fullName, email } = useContext(CustomerContext)
+  let { fullName, email, customerId } = useContext(CustomerContext)
 
   const shippingStep = currentStep === 'shipping'
   const paymentStep = currentStep === 'payment'
@@ -34,6 +34,7 @@ function CheckoutPage({ stripe }) {
   if (fullName && email) {
     initialValues.customer.name = fullName
     initialValues.customer.email = email
+    initialValues.customer.id = customerId
   }
 
   function validate(values) {
@@ -314,6 +315,7 @@ function CheckoutPage({ stripe }) {
                           <AddressFields type="billing_address" form={form} />
                         )}
 
+                        {!values.customer.id &&
                         <div className="my-2 w-full">
                           <label
                             htmlFor="createCustomer"
@@ -351,7 +353,7 @@ function CheckoutPage({ stripe }) {
                             </span>
                           </label>
                         </div>
-
+                        }
                         {values.createCustomer && (
                           <div className="my-2 w-full">
                             <Input
