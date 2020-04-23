@@ -5,6 +5,8 @@ import useLocalStorage from './useLocalStorage'
 
 const SET_CUSTOMER = 'SET_CUSTOMER'
 const LOGOUT = 'LOGOUT'
+const SET_ADDRESSES = 'SET_ADDRESSES'
+const SET_ORDERS = 'SET_ORDERS'
 
 let CustomerContext
 
@@ -24,6 +26,7 @@ function reducer(state, action) {
       const customerId = action.payload.name
 
       return {
+        ...state,
         email,
         fullName,
         customerId,
@@ -32,9 +35,24 @@ function reducer(state, action) {
 
     case LOGOUT:
       return {
+        ...state,
         email: null,
         fullName: null,
-        loggedIn: false
+        loggedIn: false,
+        addresses: null,
+        orders: null
+      }
+
+    case SET_ADDRESSES:
+      return {
+        ...state,
+        addresses: action.payload
+      }
+
+      case SET_ORDERS:
+      return {
+        ...state,
+        orders: action.payload
       }
 
     default:
@@ -51,10 +69,12 @@ function CustomerProvider({ children, customerToken, ...props }) {
   const fullName = state.fullName
   const email = state.email
   const customer = customerId
+  const addressesList = state.addresses
 
   useEffect(() => {
     token && setToken(token)
     customerId && getCustomer(customerId, token)
+    customerId && getAddresses()
   }, [token])
 
   async function getCustomer(id, token) {
@@ -69,16 +89,11 @@ function CustomerProvider({ children, customerToken, ...props }) {
 
 
   async function allOrders() {
-    const allOrdersData = await moltin.get(
+    const { data: payload } = await moltin.get(
       '/orders', {
       'X-Moltin-Customer-Token': token
       })
-    return allOrdersData
-  }
-
-  async function orderDetails() {
-    const res = await moltin.get('/orders/bbdc7765-0822-4322-aefa-08b63057a3bb')
-    return res
+    dispatch({ type: SET_ORDERS, payload })
   }
 
   async function register(name, email, password) {
@@ -106,6 +121,12 @@ function CustomerProvider({ children, customerToken, ...props }) {
     return customer_id
   }
 
+  async function onTokenError(e) {
+    if (e.statusCode === 403) {
+      await logout()
+    }
+  }
+
   async function logout() {
     setToken('')
     setCustomerId('')
@@ -130,7 +151,14 @@ function CustomerProvider({ children, customerToken, ...props }) {
   }
 
   async function getAddresses() {
-    return []
+    try {
+      const { data: payload, ...args } = await moltin.get(`/customers/${customer}/addresses`, {
+        'X-Moltin-Customer-Token': token
+      })
+      dispatch({ type: SET_ADDRESSES, payload })
+    } catch (e) {
+      await onTokenError(e)
+    }
   }
 
   async function addAddress(address) {
@@ -157,8 +185,8 @@ function CustomerProvider({ children, customerToken, ...props }) {
         fullName,
         email,
         allOrders,
-        orderDetails,
-        customerId
+        customerId,
+        addressesList
       }}
     >
       {children}

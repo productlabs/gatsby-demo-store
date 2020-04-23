@@ -8,7 +8,7 @@ import SideMenu from '../components/SideMenu'
 
 function ProfilePage() {
   const { fullName, email } = useContext(CustomerContext)
-  const { updateCustomerInfo, allOrders, orderDetails } = useContext(CustomerContext)
+  const { updateCustomerInfo } = useContext(CustomerContext)
   const [customerError, setCustomerError] = useState(null)
   const [isEditData, setIsEditData] = useState(false)
 

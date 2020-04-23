@@ -26,7 +26,8 @@ function CheckoutPage({ stripe }) {
   const { checkout, pay, confirmTransaction } = useContext(CheckoutContext)
   const [checkoutError, setCheckoutError] = useState(null)
   const [cardElement, setCardElement] = useState(null)
-  let { fullName, email, customerId } = useContext(CustomerContext)
+  let { fullName, email, customerId, addressesList } = useContext(CustomerContext)
+  let checked = ''
 
   const shippingStep = currentStep === 'shipping'
   const paymentStep = currentStep === 'payment'
@@ -35,6 +36,10 @@ function CheckoutPage({ stripe }) {
     initialValues.customer.name = fullName
     initialValues.customer.email = email
     initialValues.customer.id = customerId
+  }
+
+  function selectAddress(addressId) {
+    checked = addressId
   }
 
   function validate(values) {
@@ -260,6 +265,39 @@ function CheckoutPage({ stripe }) {
                         <h2 className="text-black font-medium leading-loose p-0 mb-3 pt-6 pb-3 border-b border-grey-light">
                           Shipping address
                         </h2>
+                        <div className="flex flex-wrap">
+                        {addressesList && addressesList.length && addressesList.map(el => (
+                          <ul key={el.id} className="w-1/2 p-0 list-reset">
+                            <li className="flex">
+                              <input
+                                type="radio"
+                                name="site_name"
+                                className="mt-1"
+                                id={el.id}
+                                value={el.name}
+                                defaultChecked={checked === el.id}
+                                onChange={() => selectAddress(el.id)}
+                              />
+                              <label className="ml-2 mb-2" htmlFor={el.id}>
+                                <div>
+                                  {el.first_name} {el.last_name}
+                                </div>
+                                <div>
+                                  {el.line_1}
+                                </div>
+                                <div>
+                                  {el.city}, {el.county}, {el.country}
+                                </div>
+                                <div>
+                                  {el.postcode}
+                                </div>
+                              </label>
+                            </li>
+                          </ul>
+                          )
+
+                        )}
+                        </div>
 
                         <AddressFields type="shipping_address" form={form} />
                       </div>
