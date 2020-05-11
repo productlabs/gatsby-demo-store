@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import { CustomerContext } from '../context'
 import SideMenu from '../components/SideMenu'
 
 function OrderPage() {
-  const { allOrders } = useContext(CustomerContext)
+  const { ordersList } = useContext(CustomerContext)
 
   return (
     <React.Fragment>
@@ -15,14 +15,35 @@ function OrderPage() {
             Purchase History
           </h3>
 
-          <div className="max-w-sm">
-            <button
-              onClick={allOrders}
-              type="button"
-              className="mr-4 w-48 appearance-none bg-black border border-black text-white hover:text-white px-4 py-3 leading-tight rounded-none focus:outline-none mt-4 no-underline"
-            >
-              GetAllOrders
-            </button>
+          <div>
+            <table className="table-auto">
+              <thead>
+              <tr className="bg-grey-light">
+                <th className="pr-20 pl-6 py2">Status</th>
+                <th className="pr-20 pl-6 py-2">Payment</th>
+                <th className="pr-20 pl-6 py-2">Price</th>
+                <th className="pr-20 pl-6 py-2">Date</th>
+              </tr>
+              </thead>
+              <tbody>
+              {ordersList && ordersList.length && ordersList.map(element => (
+                  <tr>
+                    <td className="border pr-8 pl-4 py-2">
+                      {element.status}
+                    </td>
+                    <td className="border pr-8 pl-4 py-2">
+                      {element.payment}
+                    </td>
+                    <td className="border pr-8 pl-4 py-2">
+                      {element.meta.display_price && element.meta.display_price.with_tax && element.meta.display_price.with_tax.formatted}
+                    </td>
+                    <td className="border pr-8 pl-4 py-2">
+                      {element.meta.timestamps.created_at}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

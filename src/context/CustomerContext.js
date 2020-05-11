@@ -70,11 +70,13 @@ function CustomerProvider({ children, customerToken, ...props }) {
   const email = state.email
   const customer = customerId
   const addressesList = state.addresses
+  const ordersList = state.orders
 
   useEffect(() => {
     token && setToken(token)
     customerId && getCustomer(customerId, token)
     customerId && getAddresses()
+    customerId && getAllOrders()
   }, [token])
 
   async function getCustomer(id, token) {
@@ -88,7 +90,7 @@ function CustomerProvider({ children, customerToken, ...props }) {
   }
 
 
-  async function allOrders() {
+  async function getAllOrders() {
     const { data: payload } = await moltin.get(
       '/orders', {
       'X-Moltin-Customer-Token': token
@@ -184,7 +186,7 @@ function CustomerProvider({ children, customerToken, ...props }) {
         updateCustomerInfo,
         fullName,
         email,
-        allOrders,
+        ordersList,
         customerId,
         addressesList
       }}
